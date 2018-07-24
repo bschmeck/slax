@@ -34,7 +34,7 @@ defmodule Slax.ParserTest do
 
     use Slax.Parser, state: 0
 
-    def handle({:startElement, _, _, _, _}, count), do: count + 1
+    def handle(%Slax.Event.StartElement{}, count), do: count + 1
   end
 
   @xml "<xml><node name=\"test node\">Value</node></xml>"

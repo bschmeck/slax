@@ -1,6 +1,10 @@
 defmodule Slax do
   defstruct [:module, :state]
 
+  alias Slax.Event.Characters
+  alias Slax.Event.EndElement
+  alias Slax.Event.StartElement
+
   @chunk_size 10_000
 
   def parse(io, module, options \\ [])
@@ -54,10 +58,15 @@ defmodule Slax do
 
   defp handler(elt, slax_state = %Slax{module: mod, state: mod_state}) do
     try do
-      new_state = mod.handle(elt, mod_state)
+      new_state = elt |> struct_for |> mod.handle(mod_state)
       %Slax{slax_state | state: new_state}
     rescue
       FunctionClauseError -> slax_state
     end
   end
+
+  defp struct_for({:startElement, uri, local_name, prefix, attributes}), do: %StartElement{attributes: attributes, local_name: local_name, prefix: prefix, uri: uri}
+  defp struct_for({:endElement, uri, local_name, prefix}), do: %EndElement{local_name: local_name, prefix: prefix, uri: uri}
+  defp struct_for({:characters, chars}), do: %Characters{characters: chars}
+  defp struct_for(elt), do: elt
 end

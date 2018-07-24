@@ -13,21 +13,21 @@ defmodule SlaxTest do
     @behaviour Slax.Parser
 
     use Slax.Parser, state: []
-    def handle({:startElement, _, name, _, _}, names), do: [name | names]
+    def handle(event = %Slax.Event.StartElement{}, names), do: [event.local_name | names]
   end
 
   defmodule EndTagCapture do
     @behaviour Slax.Parser
 
     use Slax.Parser, state: []
-    def handle({:endElement, _, name, _}, names), do: [name | names]
+    def handle(event = %Slax.Event.EndElement{}, names), do: [event.local_name | names]
   end
 
   defmodule CharacterCapture do
     @behaviour Slax.Parser
 
     use Slax.Parser, state: []
-    def handle({:characters, text}, texts), do: [text | texts]
+    def handle(event = %Slax.Event.Characters{}, texts), do: [event.characters | texts]
   end
 
   test "it parses XML with text and attributes" do
