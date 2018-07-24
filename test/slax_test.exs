@@ -37,38 +37,32 @@ defmodule SlaxTest do
     def handle(event = %Slax.Event.StartElement{}, _state), do: event.attributes
   end
 
-  test "it parses XML with text and attributes" do
-    xml = "<xml><node name=\"test node\">Value</node></xml>"
+  @xml "<xml><node name=\"test node\" id=\"55\">Value</node></xml>"
 
+  test "it parses XML with text and attributes" do
     # We should get start/end for document, xml and node, plus 1 for the text
-    assert Slax.parse(xml, Counter) == {:ok, 7}
+    assert Slax.parse(@xml, Counter) == {:ok, 7}
   end
 
   test "it accepts parameters to init" do
-    xml = "<xml><node name=\"test node\">Value</node></xml>"
-
     # We should get start/end for document, xml and node, plus 1 for the text
-    assert Slax.parse(xml, Counter, [5]) == {:ok, 12}
+    assert Slax.parse(@xml, Counter, [5]) == {:ok, 12}
   end
 
   test "it sends start tags to the handler" do
-    xml = "<xml><node name=\"test node\">Value</node></xml>"
-    assert Slax.parse(xml, StartTagCapture) == {:ok, ~w[node xml]}
+    assert Slax.parse(@xml, StartTagCapture) == {:ok, ~w[node xml]}
   end
 
   test "it sends an attribute map with start tag events" do
-    xml = "<xml><node name=\"test node\" id=\"55\">Value</node></xml>"
-    assert Slax.parse(xml, AttributeCapture) == {:ok, %{"name" => "test node", "id" => "55"}}
+    assert Slax.parse(@xml, AttributeCapture) == {:ok, %{"name" => "test node", "id" => "55"}}
   end
 
   test "it sends end tags to the handler" do
-    xml = "<xml><node name=\"test node\">Value</node></xml>"
-    assert Slax.parse(xml, EndTagCapture) == {:ok, ~w[xml node]}
+    assert Slax.parse(@xml, EndTagCapture) == {:ok, ~w[xml node]}
   end
 
   test "it sends text characters to the handler" do
-    xml = "<xml><node name=\"test node\">Value</node></xml>"
-    assert Slax.parse(xml, CharacterCapture) == {:ok, ~w[Value]}
+    assert Slax.parse(@xml, CharacterCapture) == {:ok, ~w[Value]}
   end
 
   test "complains about XML without a closing xml tag" do
