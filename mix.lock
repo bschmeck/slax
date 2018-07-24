@@ -1,3 +1,3 @@
 %{
-  "erlsom": {:git, "git@github.com:willemdj/erlsom.git", "472d07090b0b34aa2f7ba3fcaa168371e95172ed", []},
+  "erlsom": {:hex, :erlsom, "1.4.2", "5cddb82fb512f406f61162e511ae86582f824f0dccda788378b18a00d89c1b3f", [:rebar3], [], "hexpm"},
 }
