@@ -30,6 +30,13 @@ defmodule SlaxTest do
     def handle(event = %Slax.Event.Characters{}, texts), do: [event.characters | texts]
   end
 
+  defmodule AttributeCapture do
+    @behaviour Slax.Parser
+
+    use Slax.Parser, state: nil
+    def handle(event = %Slax.Event.StartElement{}, _state), do: event.attributes
+  end
+
   test "it parses XML with text and attributes" do
     xml = "<xml><node name=\"test node\">Value</node></xml>"
 
@@ -47,6 +54,11 @@ defmodule SlaxTest do
   test "it sends start tags to the handler" do
     xml = "<xml><node name=\"test node\">Value</node></xml>"
     assert Slax.parse(xml, StartTagCapture) == {:ok, ~w[node xml]}
+  end
+
+  test "it sends an attribute map with start tag events" do
+    xml = "<xml><node name=\"test node\" id=\"55\">Value</node></xml>"
+    assert Slax.parse(xml, AttributeCapture) == {:ok, %{"name" => "test node", "id" => "55"}}
   end
 
   test "it sends end tags to the handler" do

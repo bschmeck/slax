@@ -66,11 +66,17 @@ defmodule Slax do
   end
 
   defp struct_for({:startElement, uri, local_name, prefix, attributes}) do
-    %StartElement{attributes: attributes, local_name: to_string(local_name), prefix: to_string(prefix), uri: to_string(uri)}
+    attrs = build_attrs(%{}, attributes)
+    %StartElement{attributes: attrs, local_name: to_string(local_name), prefix: to_string(prefix), uri: to_string(uri)}
   end
   defp struct_for({:endElement, uri, local_name, prefix}) do
     %EndElement{local_name: to_string(local_name), prefix: to_string(prefix), uri: to_string(uri)}
   end
   defp struct_for({:characters, chars}), do: %Characters{characters: to_string(chars)}
   defp struct_for(elt), do: elt
+
+  defp build_attrs(attrs, []), do: attrs
+  defp build_attrs(attrs, [{:attribute, name, [], [], value} | rest]) do
+    attrs |> Map.put(to_string(name), to_string(value)) |> build_attrs(rest)
+  end
 end
