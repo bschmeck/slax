@@ -46,17 +46,17 @@ defmodule SlaxTest do
 
   test "it sends start tags to the handler" do
     xml = "<xml><node name=\"test node\">Value</node></xml>"
-    assert Slax.parse(xml, StartTagCapture) == {:ok, ['node', 'xml']}
+    assert Slax.parse(xml, StartTagCapture) == {:ok, ~w[node xml]}
   end
 
   test "it sends end tags to the handler" do
     xml = "<xml><node name=\"test node\">Value</node></xml>"
-    assert Slax.parse(xml, EndTagCapture) == {:ok, ['xml', 'node']}
+    assert Slax.parse(xml, EndTagCapture) == {:ok, ~w[xml node]}
   end
 
   test "it sends text characters to the handler" do
     xml = "<xml><node name=\"test node\">Value</node></xml>"
-    assert Slax.parse(xml, CharacterCapture) == {:ok, ['Value']}
+    assert Slax.parse(xml, CharacterCapture) == {:ok, ~w[Value]}
   end
 
   test "complains about XML without a closing xml tag" do

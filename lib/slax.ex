@@ -65,8 +65,12 @@ defmodule Slax do
     end
   end
 
-  defp struct_for({:startElement, uri, local_name, prefix, attributes}), do: %StartElement{attributes: attributes, local_name: local_name, prefix: prefix, uri: uri}
-  defp struct_for({:endElement, uri, local_name, prefix}), do: %EndElement{local_name: local_name, prefix: prefix, uri: uri}
-  defp struct_for({:characters, chars}), do: %Characters{characters: chars}
+  defp struct_for({:startElement, uri, local_name, prefix, attributes}) do
+    %StartElement{attributes: attributes, local_name: to_string(local_name), prefix: to_string(prefix), uri: to_string(uri)}
+  end
+  defp struct_for({:endElement, uri, local_name, prefix}) do
+    %EndElement{local_name: to_string(local_name), prefix: to_string(prefix), uri: to_string(uri)}
+  end
+  defp struct_for({:characters, chars}), do: %Characters{characters: to_string(chars)}
   defp struct_for(elt), do: elt
 end
