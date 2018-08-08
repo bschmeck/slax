@@ -7,7 +7,9 @@ defmodule Slax.MixProject do
       version: "0.1.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      description: "SAX parser",
+      package: package()
     ]
   end
 
@@ -21,7 +23,17 @@ defmodule Slax.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:erlsom, git: "git@github.com:willemdj/erlsom.git"}
+      {:erlsom, "~> 1.4"},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+    ]
+  end
+
+  defp package do
+    [
+      licenses: ~w[MIT],
+      maintainers: ["Ben Schmeckpeper"],
+      exclude_patterns: [~r{~$}],
+      links: %{"GitHub" => "https://github.com/bschmeck/slax"}
     ]
   end
 end
