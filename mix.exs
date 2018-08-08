@@ -31,6 +31,7 @@ defmodule Slax.MixProject do
     [
       licenses: ~w[MIT],
       maintainers: ["Ben Schmeckpeper"],
+      exclude_patterns: [~r{~$}],
       links: %{"GitHub" => "https://github.com/bschmeck/slax"}
     ]
   end
