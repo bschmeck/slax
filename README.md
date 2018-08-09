@@ -27,6 +27,18 @@ defmodule StdoutParser do
 end
 ```
 
+The parser module's `init` function will be called prior to start of parsing.  The optional `state` keyword can be used in conjunction with the `use` declaration to provide an argument to the `init` function:
+
+```
+defmodule StateParser do
+  @behaviour Slax.Parser
+
+  use Slax.Parser, state: 55
+
+  def init([value]), do: value * 2 # Will set initial state to 110
+end
+```
+
 ### Events
 
 Slax defines a struct for each kind of event that can possibly be generated:
