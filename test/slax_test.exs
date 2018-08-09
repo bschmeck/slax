@@ -44,6 +44,13 @@ defmodule SlaxTest do
     assert Slax.parse(@xml, Counter) == {:ok, 7}
   end
 
+  test "it parses an IO object containing XML" do
+    {:ok, true} = File.open("test/support/simple.xml", fn(file) ->
+      # We should get start/end for document, xml and node, plus 1 for the text and 2 ignorable whitespaces
+      assert Slax.parse(file, Counter) == {:ok, 9}
+    end)
+  end
+
   test "it accepts parameters to init" do
     # We should get start/end for document, xml and node, plus 1 for the text
     assert Slax.parse(@xml, Counter, [5]) == {:ok, 12}
