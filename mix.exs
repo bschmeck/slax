@@ -9,7 +9,8 @@ defmodule Slax.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       description: "SAX parser",
-      package: package()
+      package: package(),
+      docs: docs()
     ]
   end
 
@@ -34,6 +35,14 @@ defmodule Slax.MixProject do
       maintainers: ["Ben Schmeckpeper"],
       exclude_patterns: [~r{~$}],
       links: %{"GitHub" => "https://github.com/bschmeck/slax"}
+    ]
+  end
+
+  defp docs do
+    [
+      source_url: "https://github.com/bschmeck/slax",
+      extras: ["README.md"],
+      main: "readme"
     ]
   end
 end
