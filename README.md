@@ -6,7 +6,7 @@ Slax is a SAX parser for XML documents, built atop the [`erlsom`](https://github
 
 To begin parsing, pass an IO object or string, along with a parser module and (optional) initial state to the `Slax.parse/3` function.
 
-The parser module should include a `handle/3` function head for any event it wishes to handle.  The function will receive an event struct containing relevant data for the current portion of the XML being parsed, as well as whatever ancillary state has been accumulated.  The return value of the function call will be passed to the following invocation of `handle/2` as the new state.  If no function clause matches the supplied arguments, the previous state will be preserved and supplied to the next invocation of `handle/3`.
+The parser module should include a `handle/2` function head for any event it wishes to handle.  The function will receive an event struct containing relevant data for the current portion of the XML being parsed, as well as whatever ancillary state has been accumulated.  The return value of the function call will be passed to the following invocation of `handle/2` as the new state.  If no function clause matches the supplied arguments, the previous state will be preserved and supplied to the next invocation of `handle/2`.
 
 ### Parser Modules
 
@@ -27,7 +27,9 @@ defmodule StdoutParser do
 end
 ```
 
-The parser module's `init` function will be called prior to start of parsing.  The optional `state` keyword can be used in conjunction with the `use` declaration to provide an argument to the `init` function:
+### Initialization
+
+The parser module's `init/1` function will be called prior to start of parsing.  The value returned by the `init/1` function will be passed to the first invocation of `handle/2`.  An optional `state` keyword can be used in conjunction with the `use` declaration to provide an argument to the `init` function:
 
 ```
 defmodule StateParser do
@@ -41,7 +43,7 @@ end
 
 ### Events
 
-Slax defines a struct for each kind of event that can possibly be generated:
+Slax defines a struct for each kind of event that can possibly be generated, which can be used to pattern match in your `handle/2` function clauses.  Slax will emit some or all of the following events when processing a document:
 
 * `Slax.Event.StartDocument`
 * `Slax.Event.EndDocument`
