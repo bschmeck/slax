@@ -57,6 +57,9 @@ Slax defines a struct for each kind of event that can possibly be generated, whi
 * `Slax.Event.Error`
 * `Slax.Event.InternalError`
 
+## Concurrency
+
+Slax does not spawn a new processs, the parser runs in the same process that calls it and no progress will be made on parsing until the `handle/3` call returns.  Should you wish to process events concurrently with parsing the document, it is advised that your `handle/3` functions call out (asynchronously) to a `GenServer` or some other such mechanism.
 ## Installation
 
 Slax is [available in Hex](https://hex.pm/docs/publish) and can be installed by adding `slax` to your list of dependencies in `mix.exs`:
