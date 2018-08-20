@@ -4,7 +4,7 @@ Slax is a SAX parser for XML documents, built atop the [`erlsom`](https://github
 
 ## Usage
 
-To begin parsing, pass an IO object or string, along with a parser module and (optional) initial state to the `Slax.parse/3` function.
+To begin parsing, pass an IO object or `String`, along with a parser module and (optional) initial state to the `Slax.parse/3` function.
 
 The parser module should include a `handle/2` function head for any event it wishes to handle.  The function will receive an event struct containing relevant data for the current portion of the XML being parsed, as well as whatever ancillary state has been accumulated.  The return value of the function call will be passed to the following invocation of `handle/2` as the new state.  If no function clause matches the supplied arguments, the previous state will be preserved and supplied to the next invocation of `handle/2`.
 
