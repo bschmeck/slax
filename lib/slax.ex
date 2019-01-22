@@ -1,9 +1,7 @@
 defmodule Slax do
   defstruct [:module, :state]
 
-  alias Slax.Event.Characters
-  alias Slax.Event.EndElement
-  alias Slax.Event.StartElement
+  alias Slax.Event.{Characters, EndDocument, EndElement, EndPrefixMapping, Error, IgnorableWhitespace, InternalError, ProcessingInstruction, StartDocument, StartElement, StartPrefixMapping}
 
   @chunk_size 10_000
 
@@ -57,8 +55,9 @@ defmodule Slax do
   end
 
   defp handler(elt, slax_state = %Slax{module: mod, state: mod_state}) do
+    event = struct_for(elt)
     try do
-      new_state = elt |> struct_for |> mod.handle(mod_state)
+      new_state = mod.handle(event, mod_state)
       %Slax{slax_state | state: new_state}
     rescue
       FunctionClauseError -> slax_state
@@ -73,7 +72,14 @@ defmodule Slax do
     %EndElement{local_name: to_string(local_name), prefix: to_string(prefix), uri: to_string(uri)}
   end
   defp struct_for({:characters, chars}), do: %Characters{characters: to_string(chars)}
-  defp struct_for(elt), do: elt
+  defp struct_for(:startDocument), do: %StartDocument{}
+  defp struct_for(:endDocument), do: %EndDocument{}
+  defp struct_for({:startPrefixMapping, prefix, uri}), do: %StartPrefixMapping{prefix: to_string(prefix), uri: to_string(uri)}
+  defp struct_for({:endPrefixMapping, prefix}), do: %EndPrefixMapping{prefix: to_string(prefix)}
+  defp struct_for({:ignorableWhitespace, characters}), do: %IgnorableWhitespace{characters: to_string(characters)}
+  defp struct_for({:processingInstruction, target, data}), do: %ProcessingInstruction{target: to_string(target), data: to_string(data)}
+  defp struct_for({:error, description}), do: %Error{description: to_string(description)}
+  defp struct_for({:internalError, description}), do: %InternalError{description: to_string(description)}
 
   defp build_attrs(attrs, []), do: attrs
   defp build_attrs(attrs, [{:attribute, name, [], [], value} | rest]) do

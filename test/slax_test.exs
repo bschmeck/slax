@@ -9,6 +9,15 @@ defmodule SlaxTest do
     def handle(_, count), do: count + 1
   end
 
+  defmodule EventCounter do
+    @behaviour Slax.Parser
+
+    use Slax.Parser
+    def init([event_type]), do: %{event_type: event_type, count: 0}
+    def handle(%event_type{}, %{event_type: event_type, count: count}), do: %{event_type: event_type, count: count + 1}
+    def finalize(%{count: count}), do: count
+  end
+
   defmodule StartTagCapture do
     @behaviour Slax.Parser
 
@@ -37,11 +46,23 @@ defmodule SlaxTest do
     def handle(event = %Slax.Event.StartElement{}, _state), do: event.attributes
   end
 
-  @xml "<xml><node name=\"test node\" id=\"55\">Value</node></xml>"
+  @xml "<xml> <node name=\"test node\" id=\"55\">Value</node> </xml>"
+
+  test "it emits a StartDocument event" do
+    assert Slax.parse(@xml, EventCounter, [Slax.Event.StartDocument]) == {:ok, 1}
+  end
+
+  test "it emits an EndDocument event" do
+    assert Slax.parse(@xml, EventCounter, [Slax.Event.EndDocument]) == {:ok, 1}
+  end
+
+  test "it emits an IgnorableWhitespace event" do
+    assert Slax.parse(@xml, EventCounter, [Slax.Event.IgnorableWhitespace]) == {:ok, 2}
+  end
 
   test "it parses XML with text and attributes" do
-    # We should get start/end for document, xml and node, plus 1 for the text
-    assert Slax.parse(@xml, Counter) == {:ok, 7}
+    # We should get start/end for document, xml and node, plus 1 for the text and 2 ignorable whitespaces
+    assert Slax.parse(@xml, Counter) == {:ok, 9}
   end
 
   test "it parses an IO object containing XML" do
@@ -52,8 +73,8 @@ defmodule SlaxTest do
   end
 
   test "it accepts parameters to init" do
-    # We should get start/end for document, xml and node, plus 1 for the text
-    assert Slax.parse(@xml, Counter, [5]) == {:ok, 12}
+    # We should get start/end for document, xml and node, plus 1 for the text and 2 ignorable whitespaces
+    assert Slax.parse(@xml, Counter, [5]) == {:ok, 14}
   end
 
   test "it sends start tags to the handler" do
